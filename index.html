@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Code To Image Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 1s ease-out;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #c471ed;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .image-container {
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .image-container:hover {
+            transform: scale(1.02);
+        }
+
+        #outputImage {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: opacity 0.5s ease;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #12c2e9, #c471ed);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #c471ed, #f64f59);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+        }
+
+        .developer-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .developer-name {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .title {
+            color: #c471ed;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .version {
+            opacity: 0.7;
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: linear-gradient(to right, #12c2e9, #c471ed);
+            transform: translateY(-5px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .loading {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: #c471ed;
+            animation: spin 1s ease-in-out infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(45deg) translateX(-100%); }
+            20% { transform: rotate(45deg) translateX(100%); }
+            100% { transform: rotate(45deg) translateX(100%); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .image-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Target Enc Code to Image Converter</h1>
+            <p class="tagline">Convert your Target Enc code to images instantly</p>
+        </header>
+
+        <div class="card">
+            <div class="input-group">
+                <label for="base64Input">Enter Target Enc Code:</label>
+                <input type="text" id="base64Input" class="input-field" placeholder="Paste your code here...">
+            </div>
+
+            <div class="loading" id="loadingIndicator"></div>
+
+            <div class="image-container">
+                <img id="outputImage" src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*5_-vAY4eZmoSzW9eXq6ABw.gif" alt="Decoded Image">
+            </div>
+
+            <button class="btn" onclick="decodeBase64()">
+                <i class="fas fa-code"></i> Decode
+            </button>
+        </div>
+
+        <div class="card developer-info">
+            <h2 class="developer-name">Developer Genius</h2>
+            <p class="title">Spyware / Device Hack & EthicalHacking</p>
+            <p class="version">Version-1.0</p>
+            
+            <div class="social-links">
+                <!-- Facebook နှင့် Twitter icon တွေကိုဖျောက်ထားပြီး Telegram ကိုသာထားရှိထားပါတယ် -->
+                <a href="https://t.me/Baseenc24Bot" target="_blank" rel="noopener">
+                    <i class="fab fa-telegram-plane"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> decoded successfully!
+    </div>
+
+    <script>
+        function decodeBase64() {
+            const base64String = document.getElementById('base64Input').value.trim();
+            const img = document.getElementById('outputImage');
+            const loading = document.getElementById('loadingIndicator');
+            const notification = document.getElementById('notification');
+            
+            if (!base64String) {
+                showNotification('Please enter a Target Enc code', 'error');
+                return;
+            }
+            
+            // Show loading animation
+            loading.style.display = 'block';
+            img.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                try {
+                    img.src = 'data:image/png;base64,' + base64String;
+                    
+                    img.onload = function() {
+                        loading.style.display = 'none';
+                        img.style.opacity = '1';
+                        showNotification('decoded successfully!', 'success');
+                    };
+                    
+                    img.onerror = function() {
+                        loading.style.display = 'none';
+                        img.style.opacity = '1';
+                        showNotification('Invalid Base64 code', 'error');
+                        img.src = 'https://media.tenor.com/Zp9f2I9FpFcAAAAM/anonimous-hacker.gif';
+                    };
+                } catch (e) {
+                    loading.style.display = 'none';
+                    img.style.opacity = '1';
+                    showNotification('Error decoding Base64: ' + e.message, 'error');
+                }
+            }, 1000);
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            
+            if (type === 'error') {
+                notification.style.background = 'linear-gradient(to right, #ff416c, #ff4b2b)';
+            } else {
+                notification.style.background = 'linear-gradient(to right, #12c2e9, #c471ed)';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Add some example Base64 code on click for demonstration
+        document.getElementById('base64Input').addEventListener('click', function() {
+            if (this.value === '') {
+                this.placeholder = 'Example: iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+            }
+        });
+        
+        document.getElementById('base64Input').addEventListener('blur', function() {
+            this.placeholder = 'Paste your Base64 code here...';
+        });
+    </script>
+</body>
+</html>
